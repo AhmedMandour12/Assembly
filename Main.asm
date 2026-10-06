@@ -43,6 +43,7 @@ PUBLIC welcomeMsg, prompt, commandsString
                     DB 'STATUS', 13, 10
                     DB 'CLEAR', 13, 10
                     DB 'EXIT', 13, 10
+                    DB '==============================',13,10
                     DB '$'
 
 ; ---------- CODE ----------
