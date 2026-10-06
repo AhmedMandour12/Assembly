@@ -1,11 +1,5 @@
-; ==========================================
-; Command.asm
-; Command list module
-; ==========================================
-
 .model small
 
-; Shared constants
 INCLUDE DEFINE.INC
 
 ; ---------- EXPORTS ----------
