@@ -26,14 +26,10 @@ PUBLIC ReadCommand
 .code
 
     ; PROCEDURES FROM OTHER MODULES
-    EXTRN ShowCommands:NEAR         ; Command.asm
+    EXTRN ShowCommands:NEAR        
     ; EXTRN Login:NEAR              ; under construction (AUTH.asm)
 
-;-------------------------------------------
-; KernelStart
-; Clears the screen, shows the welcome
-; message, then loops on prompt/read/execute.
-;-------------------------------------------
+
 KernelStart PROC NEAR
     CALL    ClearScreen
 
@@ -57,32 +53,21 @@ KernelExit:
     RET
 KernelStart ENDP
 
-;-------------------------------------------
-; PrintString
-; In : DX = offset of a '$'-terminated string
-;-------------------------------------------
+
 PrintString PROC NEAR
     MOV     AH, 09h
     INT     21h
     RET
 PrintString ENDP
 
-;-------------------------------------------
-; ShowPrompt
-; Prints the "OSS> " prompt
-;-------------------------------------------
+
 ShowPrompt PROC NEAR
     MOV     DX, OFFSET prompt
     CALL    PrintString
     RET
 ShowPrompt ENDP
 
-;-------------------------------------------
-; ReadCommand
-; Reads keys (echoed) into commandBuffer until
-; Enter or COMMAND_SIZE-1 characters, then
-; terminates the buffer with '$'.
-;-------------------------------------------
+
 ReadCommand PROC NEAR
     MOV     SI, 0
 
