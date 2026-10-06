@@ -13,15 +13,12 @@ PUBLIC ShowCommands
 
 ; ---------- DATA FROM OTHER MODULES ----------
 .data
-    EXTRN commandsString:BYTE       ; defined in Main.asm
+    EXTRN commandsString:BYTE      
 
 ; ---------- CODE ----------
 .code
 
-;-------------------------------------------
-; ShowCommands
-; Prints the commands list ($-terminated)
-;-------------------------------------------
+
 ShowCommands PROC NEAR
     MOV     DX, OFFSET commandsString
     MOV     AH, 09h
