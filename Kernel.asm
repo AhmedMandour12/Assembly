@@ -48,42 +48,80 @@ KernelStart ENDP
 PrintString PROC NEAR
     MOV AH,09H
     INT 21H
+
     RET
 PrintString ENDP
 
 ShowPrompt PROC NEAR
     MOV DX, OFFSET prompt
-    Call PrintString
+    call PrintString
     RET
 ShowPrompt ENDP
+
+PrintChar Proc Near
+    Mov AH,02H
+    INT 21H
+    Ret
+PrintChar ENDP
 
 ReadCommand PROC NEAR
 
     MOV SI,0
 ReadLoop:
+    
     CMP SI,COMMAND_SIZE-1
     JAE Finished
     
-    MOV Ah,01h
+    MOV Ah,08h
     INT 21h
+    
     
     CMP AL,13
     JE Finished
+    
+    CMP AL,8
+    JE HandleBackSpace
+    
+    Mov DL,AL
+    Call PrintChar
+    
     
     MOV commandBuffer[SI],AL
     inc SI
     JMP ReadLoop
     
+HandleBackSpace:
+    CMP SI,0
+    JE IgnoreBackSpace
+    
+    DEC SI
+    Mov commandBuffer[SI],'$'
+   
+    MOV DL,8
+    Call PrintChar
+    
+    MOV DL,' '
+    Call PrintChar
+    
+    MOV DL,8
+    Call PrintChar
+    
+    
+    JMP ReadLoop
+
+IgnoreBackSpace:
+    JMP ReadLoop
     
 Finished:
     MOV commandBuffer[SI],'$'
+    Call PrintNewLine
     RET
     
 ReadCommand ENDP
 
 ;After Clear Screen you should Show Any Message Like Welcome And Commands And Prompet >.<
 ClearScrean Proc Near
-   PUSH AX
+    PUSH AX
     PUSH DX
     PUSH BX
     
@@ -104,5 +142,14 @@ ClearScrean Proc Near
     
     RET
 ClearScrean ENDP
+
+PrintNewLine PROC NEAR
+   
+    MOV DL, 13       
+    Call PrintChar
+    MOV DL, 10       
+    Call PrintChar
+    RET
+PrintNewLine ENDP
 
 end
