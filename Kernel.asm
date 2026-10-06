@@ -32,7 +32,7 @@ PUBLIC ReadCommand
 ;-------------------------------------------
 ; KernelStart
 ; Clears the screen, shows the welcome
-; message, then loops on prompt/read/show.
+; message, then loops on prompt/read/execute.
 ;-------------------------------------------
 KernelStart PROC NEAR
     CALL    ClearScreen
@@ -41,11 +41,11 @@ KernelStart PROC NEAR
     CALL    PrintString
 
     ; CALL  Login                   ; under construction (AUTH.asm)
-
+     CALL    ShowCommands
 CommandLoop:
     CALL    ShowPrompt
     CALL    ReadCommand
-    CALL    ShowCommands
+ 
 
     ; CALL  ExecuteCommand          ; under construction
     ; CMP   AL, 1                   ; AL = 1 when command == EXIT
@@ -88,19 +88,19 @@ ReadCommand PROC NEAR
 
 ReadLoop:
     CMP     SI, COMMAND_SIZE - 1
-    JAE     ReadDone
+    JAE     Finished
 
     MOV     AH, 01h                 ; read char with echo
     INT     21h
 
     CMP     AL, 13                  ; Enter?
-    JE      ReadDone
+    JE      Finished
 
     MOV     commandBuffer[SI], AL
     INC     SI
     JMP     ReadLoop
 
-ReadDone:
+Finished:
     MOV     commandBuffer[SI], '$'
     RET
 ReadCommand ENDP
