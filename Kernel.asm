@@ -1,30 +1,19 @@
+
 .model small
-
-; Shared Constants
 INCLUDE DEFINE.INC
-
 
 .data
 
-    ;==================
-    ; Get Data From Other Modules
-    ;==================
     EXTRN welcomeMsg:byte
     EXTRN prompt:byte
     EXTRN commandBuffer:byte
     
 .code
 
-;=======================
-; Get Procedures From Other Modules
-;========================
-Extrn ShowCommands:NEAR; Under Constraction in Command.asm File
-Extrn ExecuteCommand:NEAR
+Extrn ShowCommands:NEAR 
+Extrn ExecuteCommand:Near
 ;Extrn Login:Near Under Constraction in AUTH.asm
 
-;=============================
-;Make Proceduers Public For Other Modules
-;=============================
 PUBLIC KernelStart
 Public PrintString
 Public ShowPrompt
@@ -35,23 +24,21 @@ Public ReadCommand
 ;Procedures
 ;=================
 KernelStart PROC NEAR
-    MOV AX,@data
-    MOV DS,AX
-    
+    Mov AX,@data
+    Mov DS,AX
     Call ClearScrean
     MOV DX,OFFSET welcomeMsg
     Call PrintString
-    
     ;Call Login Under Constraction in AUTH.asm
-    ;Call ShowCommands; Under Constraction in Command.asm File
+    Call ShowCommands 
 CommandLoop:
     Call ShowPrompt
     Call ReadCommand
-    Call ExecuteCommand  ; Under Constraction in Command.asm File
+    Call ExecuteCommand  
     CMP AL,1 ; if command == exit then mov AL,1
     JE KernalExit
     
-    JMP CommandLoop ; infinite loop just for now until Command.asm is finished
+    JMP CommandLoop 
 
 KernalExit :   
     RET
