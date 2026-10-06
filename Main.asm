@@ -42,6 +42,7 @@ PUBLIC welcomeMsg, prompt, commandsString
                     DB 'LOG', 13, 10
                     DB 'STATUS', 13, 10
                     DB 'CLEAR', 13, 10
+                    DB 'SNAKE',13,10
                     DB 'EXIT', 13, 10
                     DB '==============================',13,10
                     DB '$'
