@@ -83,24 +83,24 @@ ReadCommand ENDP
 
 ;After Clear Screen you should Show Any Message Like Welcome And Commands And Prompet >.<
 ClearScrean Proc Near
+   PUSH AX
+    PUSH DX
+    PUSH BX
     
-    ;clear interrupt 10 ,ah =06
-    MOV AH,06h ; scrol up
-    MOV AL, 00H; clear
-    
-    MOV BH,07h; Color Light Gray Background Black
-    
-    Mov CX,0000h;start from first row and first column
-    Mov DX,184FH;DH:ROW  DL: Column, DOS is 25x80  this means i have 25 row and 80 columns , index starting from 0
-   
-    INT 10H;Clrear From(0,0) To (24,97)
-    
+    MOV AH, 00H
+    MOV AL, 03H     ; Mode 03h: 80x25 text mode, 16 colors
+    INT 10H
+
     
     ;Move Curser UP INT 10 AH 02
     MOV AH,02H
     MOV BH,00H ; Page0
     MOV DX,0000H
     INT 10H
+    
+    POP BX
+    POP DX
+    POP AX
     
     RET
 ClearScrean ENDP
