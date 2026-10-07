@@ -9,9 +9,11 @@ INCLUDE DEFINE.INC
 .data
     EXTRN commandBuffer:BYTE 
     EXTRN commandsString:BYTE
+    EXTRN welcomeMsg:BYTE
     cmdHelp     DB 'HELP$'
     cmdStatus   DB 'STATUS$'
     cmdExit     DB 'EXIT$'
+    cmdClear    DB 'CLEAR$'
     statusMsg   DB 13,10,'OS Simulation is running...$'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -36,7 +38,7 @@ INCLUDE DEFINE.INC
 .code
 
     EXTRN PrintString:Near
-    
+    EXTRN ClearScrean:NEAR
     
     ShowCommands PROC NEAR
         MOV DX, OFFSET commandsString
@@ -88,6 +90,12 @@ NotEqual:
         Call CompareString
         CMP AL, 1
         JE StatusCommand
+     ;Clear
+        MOV SI,OFFSET commandBuffer
+        MOV DI,OFFSET cmdClear
+        Call CompareString
+        CMP AL,1
+        JE ClearCommand
         
     ;EXIT
         Mov SI , OFFSET commandBuffer
@@ -110,6 +118,10 @@ StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
         JMP Finish
+
+ClearCommand:
+        Call ReloadScreen
+        JMP Finish
 Finish:
         Mov AL,0
         RET
@@ -118,6 +130,14 @@ ExitCommand:
         RET
         
         ExecuteCommand ENDP
-      
+            
+        ReloadScreen Proc Near
+            Call ClearScrean
+            Mov DX, OFFSET welcomeMsg
+            Call PrintString
+            Call ShowCommands
+            RET
+        ReloadScreen ENDP
+  
     
 END
