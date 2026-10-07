@@ -14,6 +14,7 @@ INCLUDE DEFINE.INC
     cmdStatus   DB 'STATUS$'
     cmdExit     DB 'EXIT$'
     cmdClear    DB 'CLEAR$'
+    cmdTime    DB 'TIME$'
     statusMsg   DB 13,10,'OS Simulation is running...$'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -33,13 +34,13 @@ INCLUDE DEFINE.INC
         DB 13,10
         DB '================================',13,10
         DB '$'
-    
+     timeMsg    DB 13,10,'Current Time: $'
 ; ---------- CODE ---------- 
 .code
 
     EXTRN PrintString:Near
     EXTRN ClearScrean:NEAR
-    
+    EXTRN PrintChar:Near
     ShowCommands PROC NEAR
         MOV DX, OFFSET commandsString
         Call PrintString
@@ -97,6 +98,13 @@ NotEqual:
         CMP AL,1
         JE ClearCommand
         
+    ; TIME
+        MOV SI, OFFSET commandBuffer
+        MOV DI, OFFSET cmdTime
+        CALL CompareString
+        CMP AL, 1
+        JE TimeCommand    
+        
     ;EXIT
         Mov SI , OFFSET commandBuffer
         Mov DI, OFFSET cmdExit
@@ -122,6 +130,11 @@ StatusCommand:
 ClearCommand:
         Call ReloadScreen
         JMP Finish
+
+TimeCommand:
+        call ShowTime
+        JMP Finish
+        
 Finish:
         Mov AL,0
         RET
@@ -138,6 +151,57 @@ ExitCommand:
             Call ShowCommands
             RET
         ReloadScreen ENDP
-  
+     
+        ShowTime Proc Near
+            Mov DX,OFFSET timeMsg    
+            Call PrintString
+            
+            Mov AH,2cH
+            INT 21h
+            
+            Mov AL, CH ;HOURS
+            Call PrintTwoDigits
+            Mov Dl,':'
+            Call PrintChar
+            
+            Mov AL,CL ; Mints
+            Call PrintTwoDigits
+            Mov Dl,':'
+            Call PrintChar
+            
+            Mov AL,DH ; Seconds
+            Call PrintTwoDigits
+            
+            Ret
+            
+        ShowTime ENDP
+        
+        PrintTwoDigits Proc Near
+            PUSH AX
+            PUSH DX
+            
+            Mov AH ,0
+            Mov BL, 10
+            DIV BL ; remainder in AH , Result in AL
+            
+            PUSH AX ; store register
+            
+            MOV DL,AL
+            ADD DL,'0'
+            Call PrintChar
+            
+            POP AX ; Restore Register
+            Mov DL,AH
+            ADD DL,'0'
+            Call PrintChar
+            
+            POP DX
+            POP AX
+            
+            RET
+            
+            
+        PrintTwoDigits ENDP
+     
     
 END
