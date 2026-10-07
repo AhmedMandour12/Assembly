@@ -180,23 +180,24 @@ ExitCommand:
             PUSH AX
             PUSH DX
             
-            Mov AH ,0
-            Mov BL, 10
-            DIV BL ; remainder in AH , Result in AL
+            
+            AAM
+            ADD AH,'0'
+            ADD AL,'0'
             
             PUSH AX ; store register
             
-            MOV DL,AL
-            ADD DL,'0'
+            MOV DL,AH
             Call PrintChar
             
             POP AX ; Restore Register
-            Mov DL,AH
-            ADD DL,'0'
+            Mov DL,AL
             Call PrintChar
             
             POP DX
             POP AX
+            
+            RET
             
             RET
             
