@@ -19,7 +19,7 @@ Public PrintString
 Public ShowPrompt
 Public ClearScrean
 Public ReadCommand
-
+Public PrintChar
 ;===================
 ;Procedures
 ;=================
