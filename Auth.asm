@@ -18,7 +18,8 @@ INCLUDE DEFINE.INC
 .code
 
 PUBLIC Login
-Public ReadInput
+PUBLIC ReadInput
+PUBLIC LogOut
 
     EXTRN CompareString:Near
     EXTRN PrintChar:NEAR
@@ -182,4 +183,11 @@ PrintStars:
         
         RET
     ReadInput ENDP
+
+    LogOut Proc Near
+        Mov loginAttempts,0
+        Mov loginSuccess,0
+        Call KernelStart
+        RET
+    LogOut ENDP
 END
