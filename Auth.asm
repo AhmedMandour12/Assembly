@@ -7,6 +7,7 @@ INCLUDE DEFINE.INC
     EXTRN password:BYTE
     EXTRN loginAttempts:byte
     EXTRN loginSuccess:byte
+    EXTRN welcomeMsg:byte
     Admin DB 'Admin$'
     AdminPassword DB '1234$'
     
@@ -26,7 +27,7 @@ PUBLIC LogOut
     EXTRN PrintString:NEAR
     EXTRN ReloadScreen:Near
     EXTRN PrintNewLine:Near
-    
+    EXTRN ClearScrean:Near
     
     Login Proc Near
         Call PrintNewLine
@@ -187,7 +188,12 @@ PrintStars:
     LogOut Proc Near
         Mov loginAttempts,0
         Mov loginSuccess,0
-        Call KernelStart
+
+        Call ClearScrean
+        MOV DX,OFFSET welcomeMsg
+        Call PrintString
+        Call Login 
+        
         RET
     LogOut ENDP
 END
