@@ -30,7 +30,7 @@ INCLUDE DEFINE.INC
         DB 'HELP    - Show this help menu',13,10
         DB 'CALC    - Open calculator',13,10
         DB 'TIME    - Display current time',13,10
-        DB 'LOG     - Show security log',13,10
+        DB 'LOGOUT     - LogOut The System',13,10
         DB 'STATUS  - Show system status',13,10
         DB 'CLEAR   - Clear the screen',13,10
         DB 'EXIT    - Exit ',13,10
