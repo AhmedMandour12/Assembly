@@ -4,9 +4,11 @@ INCLUDE DEFINE.INC
 ; ---------- EXPORTS ----------
  PUBLIC ShowCommands
  PUBLIC ExecuteCommand
- 
+ Public ReloadScreen
+ Public CompareString
 ; ---------- DATA FROM OTHER MODULES ----------
 .data
+
     EXTRN commandBuffer:BYTE 
     EXTRN commandsString:BYTE
     EXTRN welcomeMsg:BYTE
@@ -34,21 +36,25 @@ INCLUDE DEFINE.INC
         DB 13,10
         DB '================================',13,10
         DB '$'
-     timeMsg    DB 13,10,'Current Time: $'
+    timeMsg    DB 13,10,'Current Time: $'
+    
 ; ---------- CODE ---------- 
 .code
 
     EXTRN PrintString:Near
     EXTRN ClearScrean:NEAR
     EXTRN PrintChar:Near
+    
     ShowCommands PROC NEAR
         MOV DX, OFFSET commandsString
         Call PrintString
         RET
     ShowCommands ENDP
     
+    ;=================
+    ; If you want Case Sensetive put 1 in cl
     CompareString PROC NEAR
-    
+
 CmpLoop:
         MOV AL, [SI]
         MOV BL, [DI]
@@ -59,9 +65,11 @@ CmpLoop:
         JE Equal
         
     ContinueCmp:
+        CMP CL,1
+        JE CaseSensetive
         AND AL, 0DFh
         AND BL, 0DFh
-        
+    CaseSensetive:
         CMP AL, BL
         JNE NotEqual
 
@@ -73,6 +81,7 @@ Equal:
         RET
 NotEqual:
         MOV AL, 0 
+ 
         RET
     CompareString ENDP
 
@@ -81,6 +90,7 @@ NotEqual:
     ;HELP
         MOV SI,OFFSET commandBuffer
         MOV DI,OFFSET cmdHelp
+        MOV CL,0
         Call CompareString
         CMP AL,1
         JE HelpCommand
@@ -88,26 +98,31 @@ NotEqual:
     ;Status
         MOV SI, OFFSET commandBuffer
         MOV DI, OFFSET cmdStatus
+        MOV CL,0
         Call CompareString
         CMP AL, 1
         JE StatusCommand
-     ;Clear
+    ;Clear
         MOV SI,OFFSET commandBuffer
         MOV DI,OFFSET cmdClear
+        MOV CL,0
         Call CompareString
         CMP AL,1
         JE ClearCommand
-        
+    
     ; TIME
         MOV SI, OFFSET commandBuffer
         MOV DI, OFFSET cmdTime
+        MOV CL,0
         CALL CompareString
         CMP AL, 1
         JE TimeCommand    
         
+        
     ;EXIT
         Mov SI , OFFSET commandBuffer
         Mov DI, OFFSET cmdExit
+        MOV CL,0
         Call CompareString
         CMP AL,1
         JE ExitCommand
@@ -126,7 +141,6 @@ StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
         JMP Finish
-
 ClearCommand:
         Call ReloadScreen
         JMP Finish
@@ -134,6 +148,7 @@ ClearCommand:
 TimeCommand:
         call ShowTime
         JMP Finish
+        
         
 Finish:
         Mov AL,0
@@ -143,7 +158,7 @@ ExitCommand:
         RET
         
         ExecuteCommand ENDP
-            
+        
         ReloadScreen Proc Near
             Call ClearScrean
             Mov DX, OFFSET welcomeMsg
@@ -151,7 +166,7 @@ ExitCommand:
             Call ShowCommands
             RET
         ReloadScreen ENDP
-     
+        
         ShowTime Proc Near
             Mov DX,OFFSET timeMsg    
             Call PrintString
@@ -199,10 +214,7 @@ ExitCommand:
             
             RET
             
-            RET
-            
             
         PrintTwoDigits ENDP
-     
-    
+        
 END
