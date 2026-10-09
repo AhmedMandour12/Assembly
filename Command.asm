@@ -17,6 +17,7 @@ INCLUDE DEFINE.INC
     cmdExit     DB 'EXIT$'
     cmdClear    DB 'CLEAR$'
     cmdTime    DB 'TIME$'
+    cmdLogOut  DB 'LOGOUT$'
     statusMsg   DB 13,10,'Loged In , Attempts Used : $'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -44,7 +45,7 @@ INCLUDE DEFINE.INC
     EXTRN PrintString:Near
     EXTRN ClearScrean:NEAR
     EXTRN PrintChar:Near
-    
+    EXTRN LogOut:Near
     ShowCommands PROC NEAR
         MOV DX, OFFSET commandsString
         Call PrintString
@@ -116,8 +117,16 @@ NotEqual:
         MOV CL,0
         CALL CompareString
         CMP AL, 1
-        JE TimeCommand    
+        JE TimeCommand 
         
+     ; LogOut
+        MOV SI, OFFSET commandBuffer
+        MOV DI, OFFSET cmdLogOut
+        MOV CL,0
+        CALL CompareString
+        CMP AL, 1
+        JE LogOutCommand    
+           
         
     ;EXIT
         Mov SI , OFFSET commandBuffer
@@ -151,7 +160,10 @@ ClearCommand:
 TimeCommand:
         call ShowTime
         JMP Finish
-        
+
+LogOutCommand:
+        Call LogOut
+        JMP Finish
         
 Finish:
         Mov AL,0
