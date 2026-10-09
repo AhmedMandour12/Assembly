@@ -8,7 +8,7 @@ INCLUDE DEFINE.INC
  Public CompareString
 ; ---------- DATA FROM OTHER MODULES ----------
 .data
-
+    EXTRN loginAttempts:byte
     EXTRN commandBuffer:BYTE 
     EXTRN commandsString:BYTE
     EXTRN welcomeMsg:BYTE
@@ -17,7 +17,7 @@ INCLUDE DEFINE.INC
     cmdExit     DB 'EXIT$'
     cmdClear    DB 'CLEAR$'
     cmdTime    DB 'TIME$'
-    statusMsg   DB 13,10,'OS Simulation is running...$'
+    statusMsg   DB 13,10,'Loged In , Attempts Used : $'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
         DB '================================',13,10
@@ -140,6 +140,9 @@ HelpCommand:
 StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
+        Mov DL,loginAttempts
+        ADD DL,'0'
+        Call PrintChar
         JMP Finish
 ClearCommand:
         Call ReloadScreen
