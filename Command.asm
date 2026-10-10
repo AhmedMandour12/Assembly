@@ -12,12 +12,14 @@ INCLUDE DEFINE.INC
     EXTRN commandBuffer:BYTE 
     EXTRN commandsString:BYTE
     EXTRN welcomeMsg:BYTE
+    cmdGuess   DB 'GUESS$'
     cmdHelp     DB 'HELP$'
     cmdStatus   DB 'STATUS$'
     cmdExit     DB 'EXIT$'
     cmdClear    DB 'CLEAR$'
     cmdTime    DB 'TIME$'
     cmdLogOut  DB 'LOGOUT$'
+  
     statusMsg   DB 13,10,'Loged In , Attempts Used : $'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -28,9 +30,10 @@ INCLUDE DEFINE.INC
         DB 'Available Commands:',13,10
         DB '-------------------',13,10
         DB 'HELP    - Show this help menu',13,10
+        DB 'GUESS   - Game Where You Try To Guess The Number',13,10
         DB 'CALC    - Open calculator',13,10
         DB 'TIME    - Display current time',13,10
-        DB 'LOGOUT     - LogOut The System',13,10
+        DB 'LOGOUT  - LogOut The System',13,10
         DB 'STATUS  - Show system status',13,10
         DB 'CLEAR   - Clear the screen',13,10
         DB 'EXIT    - Exit ',13,10
@@ -41,7 +44,8 @@ INCLUDE DEFINE.INC
     
 ; ---------- CODE ---------- 
 .code
-
+    Extrn ClearScrean:Near
+    EXTRN Guess:Near
     EXTRN PrintString:Near
     EXTRN ClearScrean:NEAR
     EXTRN PrintChar:Near
@@ -95,7 +99,13 @@ NotEqual:
         Call CompareString
         CMP AL,1
         JE HelpCommand
-    
+    ;Guess
+        MOV SI,OFFSET commandBuffer
+        MOV DI,OFFSET cmdGuess
+        MOV CL,0
+        Call CompareString
+        CMP AL,1
+        JE GuessCommand
     ;Status
         MOV SI, OFFSET commandBuffer
         MOV DI, OFFSET cmdStatus
@@ -145,7 +155,11 @@ HelpCommand:
         Mov DX,OFFSET helpMsg
         Call PrintString
         JMP Finish
-        
+GuessCommand:
+       Call ClearScrean
+       Call Guess
+       Call ReloadScreen
+       JMP Finish 
 StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
