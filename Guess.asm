@@ -1,5 +1,5 @@
 .Model small
-MAX_GUESSES EQU 7
+MAX_GUESSES EQU 4
 
 .data
     Answer DB 0
