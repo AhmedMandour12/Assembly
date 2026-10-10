@@ -19,10 +19,10 @@ INCLUDE DEFINE.INC
     ; Messages 
     ; ==========================================
      welcomeMsg DB 13,10
-     DB '==============================',13,10
-     DB ' OS SIMULATION v1.0',13,10
-     DB '==============================',13,10
-     DB 'Welcome to OS Simulation!',13,10 
+     DB '======================================================',13,10
+     DB '                 OS SIMULATION v1.1',13,10
+     DB '======================================================',13,10
+     DB '             Welcome to OS Simulation!',13,10 
      DB '$' 
      prompt DB 13,10,'OSS> $'
      commandsString DB 13,10
