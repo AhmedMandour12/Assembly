@@ -243,4 +243,4 @@ Main
 ## 👤 Author
 
 **MOAZ Abdulsalam**
-[![GitHub](https://github.com/MoazAbdulsalam)
+[![GitHub](https://img.shields.io/badge/GitHub-MoazAbdulsalam-181717?style=flat&logo=github)](https://github.com/MoazAbdulsalam)
