@@ -1,123 +1,123 @@
-# Assembly
-# OS Simulation
+OS Simulation v1.1
 
-A command-line operating system simulation written in 16-bit x86 assembly for DOS. It starts a text-mode shell, reads commands from the keyboard, and dispatches them to handler routines. The code is split into separately assembled modules that are linked into a single executable.
+A small command-line operating system simulation written in x86 (8086) Assembly for Turbo Assembler (TASM). It runs in DOS text mode and has a login screen, a command prompt, and a few built-in programs (a number-guessing game and a calculator).
 
-The project is a learning exercise in low-level programming: multi-module assembly, DOS and BIOS interrupts, and structuring a program around a simple kernel loop.
+======================================================
+                 OS SIMULATION v1.1
+======================================================
+             Welcome to OS Simulation!
 
-## Features
+OSS> _
+Features
+Login system with password masking (*) and a limit of 3 attempts before the system locks.
+Command prompt (OSS>) with case-insensitive commands.
+Built-in programs:
+Guess The Number game
+Calculator (supports negative numbers and large results)
+Modular design: each part of the system lives in its own source file and shares code through PUBLIC / EXTRN.
+Commands
+Command	Description
+HELP	Show the help menu
+GUESS	Play the number guessing game
+CALC	Open the calculator
+TIME	Display the current system time (HH:MM:SS)
+STATUS	Show login status and attempts used
+CLEAR	Clear the screen
+LOGOUT	Log out and return to the login screen
+EXIT	Exit the system
 
-- Interactive shell with a prompt and a fixed-size input buffer
-- Command dispatcher that compares the typed input against known commands
-- Screen handling through BIOS interrupt `10h`, text I/O through DOS interrupt `21h`
-- Shared data and procedures exported between modules with `PUBLIC` / `EXTRN`
-- Shared constants kept in a single include file
+Default login: Admin / 1234 (case-sensitive)
 
-## Project Structure
+Calculator
 
-```
-.
-├── Main.asm       Entry point, shared variables and messages
-├── Kernel.asm     Startup, main loop, prompt, input reading, screen clearing
-├── Command.asm    Command list output, string comparison, command dispatch
-└── DEFINE.INC     Shared constants
-```
+Type CALC at the prompt. The calculator performs one operation, waits for a key press, then returns to the system screen.
 
-| Module | Responsibility |
-| --- | --- |
-| `Main.asm` | Defines the data segment (buffers, messages, command list), sets up `DS`, and transfers control to `KernelStart`. Exits to DOS when the kernel returns. |
-| `Kernel.asm` | Clears the screen, prints the welcome message, and runs the main loop: show prompt, read a command, execute it. |
-| `Command.asm` | Prints the command list, compares strings, and implements `ExecuteCommand`. |
-| `DEFINE.INC` | Constants shared by every module. |
+================================
+       Welcome To Calculator
+================================
 
-### Constants
+1. Addition
+2. Subtraction
+3. Multiplication
+4. Division
+5. Exit
 
-| Name | Value | Purpose |
-| --- | --- | --- |
-| `COMMAND_SIZE` | 30 | Size of the command buffer, including the terminator |
-| `USERNAME_SIZE` | 20 | Size of the username buffer |
-| `PASSWORD_SIZE` | 20 | Size of the password buffer |
-| `MAX_ATTEMPTS` | 3 | Allowed login attempts |
+Choose an operation: 1
 
-## How It Works
+Enter first number: 3
 
-1. `Main.asm` initializes the data segment and calls `KernelStart`.
-2. `KernelStart` clears the screen and prints the welcome message.
-3. The kernel loop repeats:
-   - `ShowPrompt` prints `OSS>`
-   - `ReadCommand` reads characters until Enter or until the buffer is full, and terminates the string with `$`
-   - `ExecuteCommand` compares the buffer against each known command and runs the matching handler
-4. `ExecuteCommand` returns a status in `AL`. A value of `1` tells the kernel to leave the loop and return to DOS; `0` keeps the shell running.
+Enter second number: 4
 
-All strings are `$`-terminated so they can be printed directly with `INT 21h`, function `09h`.
+Result: 7
 
-## Commands
+Press any key to go back...
+Input range: -9999 to 9999.
+Results are calculated as 32-bit signed values, so multiplication never overflows (e.g. 9999 * 9999 = 99980001).
+Division returns the integer quotient only.
+Division by zero and invalid input are handled with an error message.
+Guess The Number
 
-| Command | Description | Status |
-| --- | --- | --- |
-| `HELP` | List available commands | Implemented |
-| `CLEAR` | Clear the screen | Planned |
-| `EXIT` | Leave the shell | Planned |
-| `CALC` | Calculator | Planned |
-| `TIME` | Show the system time | Planned |
-| `LOG` | Show the activity log | Planned |
-| `STATUS` | Show system status | Planned |
+Type GUESS. The system picks a number between 1 and 100 and you have 4 tries. After each guess you get a Too LOW / Too HIGH hint. Type Q to quit.
 
-Unrecognized input is ignored and the shell returns to the prompt.
+Project Structure
+File	Purpose
+Main.asm	Entry point. Holds the shared data (username, password, buffers, messages).
+Kernel.asm	Main loop (login, prompt, read, execute) and basic I/O: print, clear screen.
+Auth.asm	Login, logout, and the shared ReadInput routine.
+Command.asm	Command parser/executor, CompareString, ReloadScreen, TIME.
+Guess.asm	The guessing game.
+Calc.asm	The calculator.
+DEFINE.INC	Shared constants (MAX_ATTEMPTS, buffer sizes).
+How it flows
+Main  ->  KernelStart  ->  Login
+                             |
+                             v
+                    +-->  ShowPrompt
+                    |        |
+                    |     ReadCommand
+                    |        |
+                    |    ExecuteCommand  ->  HELP / GUESS / CALC / TIME / ...
+                    |        |
+                    +--------+   (loops until EXIT)
+Shared routines
+Routine	File	Description
+PrintString	Kernel.asm	Print a $-terminated string
+PrintChar	Kernel.asm	Print the character in DL
+PrintNewLine	Kernel.asm	Print CR + LF
+ClearScrean	Kernel.asm	Clear the screen and reset the cursor
+ReadInput	Auth.asm	Read a line. BX = buffer, CX = max length, DH=1 shows stars
+CompareString	Command.asm	Compare two $-terminated strings. CL=1 for case-sensitive
+ReloadScreen	Command.asm	Clear the screen, then show the welcome message and command list
+Build and Run
 
-## Build and Run
+Requires Turbo Assembler (TASM) and Turbo Link (TLINK), and a DOS environment (DOSBox or GUI Turbo Assembler).
 
-### Requirements
+1. Assemble every source file (DEFINE.INC is included automatically):
 
-- Turbo Assembler (`TASM`) and Turbo Linker (`TLINK`)
-- DOSBox, or any DOS-compatible environment
+tasm Main.asm
+tasm Kernel.asm
+tasm Command.asm
+tasm Auth.asm
+tasm Guess.asm
+tasm Calc.asm
 
-### Build
+2. Link them into one executable (Main must be first):
 
-```
-tasm main.asm
-tasm kernel.asm
-tasm command.asm
-tlink main.obj kernel.obj command.obj
-```
+tlink Main+Kernel+Command+Auth+Guess+Calc
 
-`main.obj` must come first in the link command because it contains the program entry point.
+3. Run:
 
-### Run
+Main
 
-```
-main
-```
+After changing a single file, you only need to re-assemble that file and run tlink again.
 
-### Example
+Adding a New Command
+In Command.asm add a string in .data, for example cmdMyCmd DB 'MYCMD$'.
+Add EXTRN MyProc:Near in the .code section.
+In ExecuteCommand, add a block that compares commandBuffer with the new string and jumps to a label (copy any existing block).
+Add the label, for example MyCmdCommand: Call MyProc then JMP Finish.
+Make your procedure PUBLIC in its own file and add it to the tlink line.
+Add the command name to helpMsg and commandsString.
+Author
 
-```
-==============================
- OS SIMULATION v1.0
-==============================
-Welcome to OS Simulation!
-Type HELP to see available commands
-
-OSS> HELP
-
-==============================
-HELP
-CALC
-TIME
-LOG
-STATUS
-CLEAR
-EXIT
-
-OSS>
-```
-
-## Roadmap
-
-- [x] Multi-module project layout and shared constants
-- [x] Shell loop with prompt and input buffer
-- [x] `HELP` command
-- [ ] `CLEAR` and `EXIT` commands
-- [ ] Case-insensitive command matching
-- [ ] Login module (`AUTH.asm`) using `MAX_ATTEMPTS`
-- [ ] `CALC`, `TIME`, `LOG`, `STATUS`
+Ahmed Mandour - @AhmedMandour12
