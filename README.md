@@ -240,6 +240,7 @@ Main
 **Ahmed Mandour**
 
 [![GitHub](https://img.shields.io/badge/GitHub-AhmedMandour12-181717?style=flat&logo=github)](https://github.com/AhmedMandour12)
+## 👤 Author
 
 **MOAZ Abdulsalam**
-[![GitHub](https://avatars.githubusercontent.com/u/222760226?v=4)](https://github.com/MoazAbdulsalam)
+[![GitHub](https://github.com/MoazAbdulsalam)
