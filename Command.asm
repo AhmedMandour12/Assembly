@@ -13,10 +13,11 @@ INCLUDE DEFINE.INC
     EXTRN commandsString:BYTE
     EXTRN welcomeMsg:BYTE
     cmdGuess   DB 'GUESS$'
-    cmdHelp     DB 'HELP$'
-    cmdStatus   DB 'STATUS$'
-    cmdExit     DB 'EXIT$'
-    cmdClear    DB 'CLEAR$'
+    cmdCalc    DB 'CALC$'
+    cmdHelp    DB 'HELP$'
+    cmdStatus  DB 'STATUS$'
+    cmdExit    DB 'EXIT$'
+    cmdClear   DB 'CLEAR$'
     cmdTime    DB 'TIME$'
     cmdLogOut  DB 'LOGOUT$'
   
@@ -46,6 +47,7 @@ INCLUDE DEFINE.INC
 .code
     Extrn ClearScrean:Near
     EXTRN Guess:Near
+    EXTRN Calculator:Near
     EXTRN PrintString:Near
     EXTRN ClearScrean:NEAR
     EXTRN PrintChar:Near
@@ -106,6 +108,13 @@ NotEqual:
         Call CompareString
         CMP AL,1
         JE GuessCommand
+    ;Calc
+        MOV SI,OFFSET commandBuffer
+        MOV DI,OFFSET cmdCalc
+        MOV CL,0
+        Call CompareString
+        CMP AL,1
+        JE CalcCommand
     ;Status
         MOV SI, OFFSET commandBuffer
         MOV DI, OFFSET cmdStatus
@@ -160,6 +169,9 @@ GuessCommand:
        Call Guess
        Call ReloadScreen
        JMP Finish 
+CalcCommand:
+        Call Calculator
+        JMP Finish       
 StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
