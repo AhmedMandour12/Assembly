@@ -21,7 +21,7 @@ MAX_GUESSES EQU 4
     TriesMsg      DB ' tries.',13,10,'$'
     LoseMsg     DB 13,10,'        Game over! The number was : $'
     QuitMsg   DB 13,10,'          Game cancelled.',13,10,'$'
-
+    playAgainMsg db 13,10,'play Again? y/n ',13,10,'$'
 .Code
     
 PUBLIC Guess
@@ -36,7 +36,7 @@ PUBLIC Guess
         PUSH CX
         PUSH DX
         
-        
+start:        
         MOV AH,2Ch
         INT 21h
         
@@ -132,9 +132,16 @@ Quit:
         Call PrintString
 GameDone: 
         
-        MOV AH,08h
-        int 21h
+        Mov DX, offset playAgainMsg
+        call PrintString
         
+        MOV AH,01h
+        int 21h
+        AND AL,0DFh
+        cmp AL,'Y'
+        jne skipRestart     
+        jmp start         
+skipRestart:
         POP DX
         POP CX
         POP BX
