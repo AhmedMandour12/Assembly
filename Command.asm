@@ -13,14 +13,14 @@ INCLUDE DEFINE.INC
     EXTRN commandsString:BYTE
     EXTRN welcomeMsg:BYTE
     cmdGuess   DB 'GUESS$'
+    cmdHelp     DB 'HELP$'
+    cmdStatus   DB 'STATUS$'
+    cmdExit     DB 'EXIT$'
     cmdCalc    DB 'CALC$'
-    cmdHelp    DB 'HELP$'
-    cmdStatus  DB 'STATUS$'
-    cmdExit    DB 'EXIT$'
-    cmdClear   DB 'CLEAR$'
+    cmdClear    DB 'CLEAR$'
     cmdTime    DB 'TIME$'
     cmdLogOut  DB 'LOGOUT$'
-  
+    cmdXO      DB 'XO$'
     statusMsg   DB 13,10,'Loged In , Attempts Used : $'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -33,6 +33,7 @@ INCLUDE DEFINE.INC
         DB 'HELP    - Show this help menu',13,10
         DB 'GUESS   - Game Where You Try To Guess The Number',13,10
         DB 'CALC    - Open calculator',13,10
+        DB 'XO      - XO Game',13,10
         DB 'TIME    - Display current time',13,10
         DB 'LOGOUT  - LogOut The System',13,10
         DB 'STATUS  - Show system status',13,10
@@ -45,6 +46,7 @@ INCLUDE DEFINE.INC
     
 ; ---------- CODE ---------- 
 .code
+    Extrn xoGame:Near
     Extrn ClearScrean:Near
     EXTRN Guess:Near
     EXTRN Calculator:Near
@@ -108,7 +110,14 @@ NotEqual:
         Call CompareString
         CMP AL,1
         JE GuessCommand
-    ;Calc
+    ;XO
+        MOV SI,OFFSET commandBuffer
+        MOV DI,OFFSET cmdXO
+        MOV CL,0
+        Call CompareString
+        CMP AL,1
+        JE XOCommand
+     ;Calc
         MOV SI,OFFSET commandBuffer
         MOV DI,OFFSET cmdCalc
         MOV CL,0
@@ -169,9 +178,14 @@ GuessCommand:
        Call Guess
        Call ReloadScreen
        JMP Finish 
+XOCommand:  
+       Call ClearScrean
+       Call xoGame
+       Call ReloadScreen
+       JMP Finish      
 CalcCommand:
         Call Calculator
-        JMP Finish       
+        JMP Finish   
 StatusCommand:
         Mov DX ,OFFSET statusMsg
         Call PrintString
@@ -206,7 +220,7 @@ ExitCommand:
             Call PrintString
             Call ShowCommands
             RET
-        ReloadScreen ENDP
+         ReloadScreen ENDP
         
         ShowTime Proc Near
             Mov DX,OFFSET timeMsg    
