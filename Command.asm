@@ -1,4 +1,5 @@
 .model small
+JUMPS
 ; Shared constants 
 INCLUDE DEFINE.INC
 ; ---------- EXPORTS ----------
@@ -21,6 +22,7 @@ INCLUDE DEFINE.INC
     cmdTime    DB 'TIME$'
     cmdLogOut  DB 'LOGOUT$'
     cmdXO      DB 'XO$'
+    cmdNotepad DB 'NOTEPAD$'
     statusMsg   DB 13,10,'Loged In , Attempts Used : $'
     NotAvailableCommand DB 13,10,'Not Available Command.$'
     helpMsg DB 13,10
@@ -34,6 +36,7 @@ INCLUDE DEFINE.INC
         DB 'GUESS   - Game Where You Try To Guess The Number',13,10
         DB 'CALC    - Open calculator',13,10
         DB 'XO      - XO Game',13,10
+        DB 'NOTEPAD - Notepad to write',13,10
         DB 'TIME    - Display current time',13,10
         DB 'LOGOUT  - LogOut The System',13,10
         DB 'STATUS  - Show system status',13,10
@@ -46,6 +49,7 @@ INCLUDE DEFINE.INC
     
 ; ---------- CODE ---------- 
 .code
+    Extrn Notepad:Near
     Extrn xoGame:Near
     Extrn ClearScrean:Near
     EXTRN Guess:Near
@@ -117,6 +121,14 @@ NotEqual:
         Call CompareString
         CMP AL,1
         JE XOCommand
+   ;NOTEPAD
+        MOV SI,OFFSET commandBuffer
+        MOV DI,OFFSET cmdNotepad
+        MOV CL,0
+        Call CompareString
+        CMP AL,1
+        JE NotePadCommand
+
      ;Calc
         MOV SI,OFFSET commandBuffer
         MOV DI,OFFSET cmdCalc
@@ -168,7 +180,6 @@ NotEqual:
         Mov DX , OFFSET NotAvailableCommand
         Call PrintString
         RET
-        
 HelpCommand:
         Mov DX,OFFSET helpMsg
         Call PrintString
@@ -182,7 +193,14 @@ XOCommand:
        Call ClearScrean
        Call xoGame
        Call ReloadScreen
-       JMP Finish      
+       JMP Finish  
+           
+NotePadCommand:
+       Call ClearScrean
+       Call Notepad
+       Call ReloadScreen
+       JMP  Finish
+       
 CalcCommand:
         Call Calculator
         JMP Finish   
