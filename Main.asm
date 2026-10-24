@@ -30,6 +30,7 @@ INCLUDE DEFINE.INC
      DB 'HELP',13,10
      DB 'CALC',13,10
      DB 'XO',13,10
+     DB 'NOTEPAD',13,10
      DB 'TIME',13,10
      DB 'LOGOUT',13,10
      DB 'STATUS',13,10
