@@ -1,6 +1,6 @@
 .model small
 
-NOTE_SIZE EQU 1000
+NOTE_SIZE EQU 2000
 
 .data
 
