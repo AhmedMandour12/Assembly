@@ -244,3 +244,8 @@ Main
 
 **MOAZ Abdulsalam**
 [![GitHub](https://img.shields.io/badge/GitHub-MoazAbdulsalam-181717?style=flat&logo=github)](https://github.com/MoazAbdulsalam)
+## 👤 Author
+
+**Heba Allah Mahmoud**
+
+[![GitHub](https://img.shields.io/badge/GitHub-HebaallahMahmoud-181717?style=flat&logo=github)](https://github.com/HebaallahMahmoud)
