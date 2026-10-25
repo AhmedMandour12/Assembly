@@ -170,6 +170,7 @@ flowchart TD
  ┣ 📜 Command.asm   → Command parser + executor
  ┣ 📜 Guess.asm     → Guessing game
  ┣ 📜 Calc.asm      → Calculator
+ ┣ 📜 xo.asm        → XO game
  ┗ 📜 DEFINE.INC    → Shared constants
 ```
 
@@ -188,6 +189,7 @@ tasm Command.asm
 tasm Auth.asm
 tasm Guess.asm
 tasm Calc.asm
+tasm xo.asm
 ```
 
 **2️⃣ Link everything into one executable** (`Main` must come first)
